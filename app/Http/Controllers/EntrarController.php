@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LogarRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,20 +15,19 @@ class EntrarController extends Controller
         return view('pages.auth.login');
     }
 
-    public function logar(Request $request)
+    public function logar(LogarRequest $request)
     {
         $user = User::where('email', $request->email)->first();
         if ($user) {
             if(Hash::check($request->password, $user->password)){
                 Auth::login($user);
             }else{
-                return redirect()->back();
-                //informar que a senha esta incorreta
+                return redirect()->back()->with('message', 'Senha incorreta'); 
             }
         }else{
-            return redirect()->back();
+            return redirect()->back()->with('message', 'Usuario não encontrado');
             //informar que o usuario nao foi encontrado
         }
-        return redirect()->route('index_produto');
+        return redirect()->route('home');
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,11 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return redirect()->route('index_produto_teste'); ///corigir as rotas
-})->name('home');
-
-Route::get('/produtos/teste', 'App\Http\Controllers\home\produtos@index')->name('index_produto_teste');
+Route::get('/', 'App\Http\Controllers\home\produtos@index')->name('home');
 
 Route::prefix('admin/')->namespace('App\Http\Controllers')->middleware('check.admin')->group(function() {
     /**
@@ -34,6 +31,7 @@ Route::prefix('admin/')->namespace('App\Http\Controllers')->middleware('check.ad
     /**
      * Rotas Produtos Admin 
      */
+    Route::post('produto/search', 'ProdutosController@search')->name('search_produto');
     Route::get('produto/create', 'ProdutosController@create')->name('create_produto');
     Route::post('produto/create', 'ProdutosController@store')->name('store_produto');
     Route::get('produto/{id}', 'ProdutosController@edit')->name('edit_produto');
@@ -47,9 +45,10 @@ Route::prefix('admin/')->namespace('App\Http\Controllers')->middleware('check.ad
     
     Route::get('pedidos/pagos', 'PedidosProdutosController@listarPedidosPagos')->name('listarPedididosPagos');
     Route::get('pedidos/cancelados', 'PedidosProdutosController@listarPedidosCancelados')->name('listarPedididosCancelados');
+    Route::post('pedido/search', 'PedidosProdutosController@search')->name('search_pedido');
+    Route::post('pedido/order', 'PedidosProdutosController@order')->name('order_pedido');
     Route::any('pedido/{status?}', 'PedidosProdutosController@index')->name('index_pedido');
     Route::get('pedido/{id}/status/{status}', 'PedidosProdutosController@update')->name('update_pedido');
-    Route::post('pedido/search', 'PedidosProdutosController@search')->name('search_pedido');
     Route::delete('pedido/delete/{id}', 'PedidosProdutosController@delete')->name('delete_pedido');
     Route::get('pedido/{id}/detalhes', 'PedidosProdutosController@show')->name('show_pedido');
     Route::get('pedido/usuario/{id}', 'PedidosProdutosController@produtosPedidos')->name('show_usuarioPedido');
@@ -66,23 +65,25 @@ Route::post('cadastrar', 'App\Http\Controllers\RegistrarController@store')->name
 Route::get('cadastrar-se', 'App\Http\Controllers\RegistrarController@index')->name('registrar');
 Route::get('login', 'App\Http\Controllers\EntrarController@index')->name('login');
 Route::post('login', 'App\Http\Controllers\EntrarController@logar')->name('login');
+Route::get('/sair', function () {
+    Auth::logout();
+    return redirect()->route('home');
+})->name('sair')->middleware('auth');
 
 /**
  * Rotas Produto
  */
 
-Route::post('produto/search', 'App\Http\Controllers\ProdutosController@search')->name('search_produto');
+Route::post('produto/search/home', 'App\Http\Controllers\home\Produtos@search')->name('search_produto_home');
 Route::get('produto/adicionar-carrinho',  'App\Http\Controllers\home\ProdutosPedidosController@adicionarAoCarrinho')->name('adicionar_produto_carrinho')->middleware('auth');
 Route::get('produtos/carrinho',  'App\Http\Controllers\home\ProdutosPedidosController@verCarrinho')->name('ver_carrinho')->middleware('auth'); 
-Route::get('store/produtos-pedidios',  'App\Http\Controllers\home\ProdutosPedidosController@salvarPedido')->name('store_pedido_produto')->middleware('auth'); 
-
-
-
+Route::get('store/produtos-pedidios',  'App\Http\Controllers\home\ProdutosPedidosController@salvarPedido')->name('store_pedido_produto')->middleware('auth');  
+Route::post('remover-produto-carrinho', 'App\Http\Controllers\home\ProdutosPedidosController@removerDoCarrinho' )->name('remover_produto_carrinho')->middleware('auth');
 
 /**
  * Rotas Pedidos
  */
-Route::get('pedido/usuario', 'App\Http\Controllers\PedidosProdutosController@create')->name('create_pedido'); 
+//Route::get('pedido/usuario', 'App\Http\Controllers\PedidosProdutosController@create')->name('create_pedido'); 
 Route::post('pedido/create/{idp}', 'App\Http\Controllers\PedidosProdutosController@store')->name('store_pedido')->middleware('auth');
 
 

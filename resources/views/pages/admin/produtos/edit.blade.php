@@ -6,7 +6,8 @@
 @endsection
 
 @section('conteudo')
-    <form action="{{route('update_produto', $produto->id)}}" method="POST">
+@include('pages.includes.alerts')
+    <form action="{{route('update_produto', $produto->id)}}" method="POST" enctype="multipart/form-data">
         @method('PUT')
        @include('pages.admin.produtos._partials.form')
     </form>

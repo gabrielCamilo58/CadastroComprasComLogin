@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUpdateProduto;
 use App\Models\Produto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 class ProdutosController extends Controller
 {
@@ -40,18 +41,19 @@ class ProdutosController extends Controller
     }
     public function edit($id)
     {
-        if(!$produto = $this->produto->find($id)) return redirect()->back();
+        if(!$produto = $this->produto->find($id)) return redirect()->back()->with('message', 'Produto não encontrado'); 
         
         return view('pages.admin.produtos.edit', compact('produto'));
     }
 
     public function update(StoreUpdateProduto $request ,$id)
     {
-        if(!$produto = $this->produto->find($id)) return redirect()->back();
+        if(!$produto = $this->produto->find($id)) return redirect()->back()->with('message', 'Produto não encontrado'); 
 
         $data = $request->all();
         if($request->hasFile('img') && $request->img->isValid()){
-            dd('fhjd');
+            if($produto->img) Storage::delete($produto->img);
+            
             $data['img'] = $request->img->store("produto/{$data['name']}/{$data['codBarras']}");
         }
 
@@ -61,7 +63,7 @@ class ProdutosController extends Controller
     }
     public function delete($id)
     {
-        if(!$produto = $this->produto->find($id)) return redirect()->back();
+        if(!$produto = $this->produto->find($id)) return redirect()->back()->with('message', 'Produto não encontrado');
 
         if(Storage::exists($produto->img)){
             Storage::delete($produto->img);

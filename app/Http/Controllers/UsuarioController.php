@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdateUsuario;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
@@ -39,23 +40,25 @@ class UsuarioController extends Controller
     public function edit($id)
     {
         
-        if(!$usuario = $this->usuario->find($id)) return redirect()->back();
+        if(!$usuario = $this->usuario->find($id)) return redirect()->back()->with('message', 'Usuario não encontrado');
 
         return view('pages.admin.usuario.edit', compact('usuario'));
     }
 
     public function update(StoreUpdateUsuario $request, $id)
     {
-        if(!$usuario = $this->usuario->find($id)) return redirect()->back();
+        $data = $request->all();
+        if(!$usuario = $this->usuario->find($id)) return redirect()->back()->with('message', 'Usuario não encontrado');
 
-        $usuario->update($request->all());
+        $data['password']= Hash::make($request->password);
+        $usuario->update($data);
 
         return redirect()->route('index_usuario');
     }
 
     public function delete($id)
     {
-        if(!$usuario = $this->usuario->find($id)) return redirect()->back();
+        if(!$usuario = $this->usuario->find($id)) return redirect()->back()->with('message', 'Usuario não encontrado');
 
         $usuario->delete();
 

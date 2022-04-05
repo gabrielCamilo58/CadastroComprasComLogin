@@ -7,7 +7,7 @@
 @endsection
 
 @section('conteudo')
-
+@include('pages.includes.alerts')
     <div class="registration-form">
         <form action="{{route('login')}}" method="POST">
             @csrf
@@ -22,6 +22,7 @@
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-block create-account">Entrar</button>
+                <a href="{{route('registrar')}}" class="btn btn-block create-account">Registar-se</a>
             </div>
         </form>
 

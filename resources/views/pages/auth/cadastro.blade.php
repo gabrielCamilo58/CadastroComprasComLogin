@@ -7,6 +7,7 @@
 @endsection
 
 @section('conteudo')
+@include('pages.includes.alerts')
     <div class="registration-form">
         <form action="{{route('cadastrar_usuario')}}" method="POST">
             @csrf
@@ -27,6 +28,7 @@
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-block create-account">Registrar-se</button>
+                <a href="{{route('login')}}" class="btn btn-block create-account">Entrar</a>
             </div>
         </form>
         <div class="social-media">

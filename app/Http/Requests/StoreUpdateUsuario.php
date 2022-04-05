@@ -23,11 +23,12 @@ class StoreUpdateUsuario extends FormRequest
      */
     public function rules()
     {
-        $id = $this->segment(2);
+        $id = $this->segment(3);
         return [
             'name' =>'required|min:3|max:255',
             'email' => "required|min:5|max:255|unique:users,email,{$id},id",
-            'cpf' => "required|numeric|digits:11|unique:users,cpf,{$id},id"
+            'cpf' => "required|numeric|digits:11|unique:users,cpf,{$id},id",
+            'password' => "required|numeric",
         ];
     }
 }

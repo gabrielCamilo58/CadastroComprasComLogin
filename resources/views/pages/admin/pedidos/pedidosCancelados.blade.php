@@ -1,16 +1,27 @@
 @extends('pages.layout')
 
 @section('navegacao')
-    <form action="{{ route('index_pedido') }}" class="form form-inline ml-2" method="POST">
-        @csrf
-        <select class="form-select form-control" aria-label="Default select example" name="select">
-            <option selected>Ordenar pedido por</option>
-            <option value="id">Mais recente</option>
-            <option value="numero">Numero do pedido</option>
-            <option value="data">data do pedido</option>
-        </select>
-        <button class="btn btn-outline-success">Ordenar</button>
-    </form>
+    <div class="d-flex justify-content-start">
+        <form action="{{ route('order_pedido') }}" class="form form-inline ml-2" method="POST">
+            @csrf
+            <select class="form-select form-control" aria-label="Default select example" name="select">
+                <option selected>Ordenar pedido por</option>
+                <option value="id">Mais recente</option>
+                <option value="numero">Numero do pedido</option>
+                <option value="data">data do pedido</option>
+            </select>
+            <input type="text" name="posicao" value="cancelado" style="display: none">
+            <button class="btn btn-outline-success">Ordenar</button>
+        </form>
+
+        <form action="{{ route('search_pedido') }}" method="POST" class="form form-inline">
+            @csrf
+            <input type="text" name="filtro" placeholder="Pesquisar por pedido n°" class="form-control">
+            <input type="text" name="posicao" value="cancelado" style="display: none">
+            <button class="btn btn-outline-success">Pesquisar</button>
+        </form>
+    </div>
+
     <h1>Pedidos</h1>
 @endsection
 

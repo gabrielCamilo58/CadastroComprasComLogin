@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUpdateProduto extends FormRequest
+class LogarRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,17 +19,13 @@ class StoreUpdateProduto extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array 
+     * @return array
      */
     public function rules()
     {
-        $id = $this->segment(3);
-        return [ 
-            'name' => 'required|min:3|max:255',
-            'price' => 'required|numeric',
-            'img' => 'nullable|image',
-            'codBarras' => "required|min:5|unique:produtos,codBarras,{$id},id",
-            'description' => 'nullable|min:3|max:255',
+        return [
+            'email' => "required|min:5|max:255",
+            'password' => "required|numeric",
         ];
     }
 }

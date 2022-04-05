@@ -5,7 +5,8 @@
 @endsection
 
 @section('conteudo')
+@include('pages.includes.alerts')
     <form action="{{route('update_usuario', $usuario->id)}}" method="POST">
-       @include('pages.usuario._partials.form')
+       @include('pages.admin.usuario._partials.form')
     </form>
 @endsection

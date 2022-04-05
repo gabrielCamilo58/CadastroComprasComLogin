@@ -1,19 +1,28 @@
 @extends('pages.layout')
 
 @section('navegacao')
+
+<form action="{{ route('search_produto_home') }}" class="d-flex ml-4 mr-4 mt-2 mb-1 " method="POST">
+    @csrf
+    <input type="text" name="filtro" placeholder="Pesquisar por produto:" class="form-control">
+    <button class="btn btn-outline-success">Pesquisar</button>
+</form>
+
     <div class="d-flex justify-content-between">
         <h1>Produtos Home</h1>
         <div>
             @php
                 if (!isset($produtosCliente)) {
-                    $produtosCliente = null;
+                    if (isset($_SESSION['produtos'])) {
+                        $produtosCliente = $_SESSION['produtos'];
+                    }else $produtosCliente = null;
                 }
             @endphp
 
             <form action="{{route('ver_carrinho', ['produtosCliente' => $produtosCliente])}}" method="POST">
                 @method('GET')
-                @if (isset($produtosCliente))
-                    <p class="badge badge-secondary  mt-3" >{{ count($produtosCliente) }}</p>
+                @if (isset($_SESSION['produtos']))
+                    <p class="badge badge-secondary  mt-3" >{{ count($_SESSION['produtos']) }}</p>
                 @endif
                 <button type="submit" class="card-link btn btn-success"><i class="fa-solid fa-bag-shopping"></i></button>
             </form>

@@ -7,6 +7,7 @@ use App\Http\services\ServicePedido;
 use App\Models\Pedido;
 use App\Models\Produto;
 use Illuminate\Http\Request;
+use Illuminate\Session\Middleware\StartSession;
 use Symfony\Component\VarDumper\VarDumper;
 
 class ProdutosPedidosController extends Controller
@@ -19,15 +20,24 @@ class ProdutosPedidosController extends Controller
     }
     public function adicionarAoCarrinho(Request $request)
     {
+        session_start();
         $produtos = $this->produto->paginate(20);
-        $produtosCliente = $request->produtosCliente;
+        if(isset($_SESSION['produtos'])){
+            $produtosCliente = $_SESSION['produtos'];
+        }else{
+        $produtosCliente = $request->produtosCliente;}
+        
         //segunda vez que adiciono o produto entra nesse
         if (isset($produtosCliente)) {
             foreach ($produtosCliente as $index => $produtoCliente) {
-                if (in_array($request->id, $produtoCliente)) {
-                    $produtosCliente[$index]['qtd'] += 1;
-                    return view('pages.Home.index', compact('produtos', 'produtosCliente'));
-                }
+               foreach($produtoCliente as $idProduto){
+                   if($idProduto === $request->id){
+                        $produtosCliente[$index]['qtd'] += 1;
+                        $_SESSION['produtos'] = $produtosCliente;
+                        return view('pages.Home.index', compact('produtos', 'produtosCliente'));
+                   }
+                   break;
+               }
             }
         }
 
@@ -38,6 +48,8 @@ class ProdutosPedidosController extends Controller
                 $produtosCliente[$index]['qtd'] = 1;
             }
         }
+        $_SESSION['produtos'] = $produtosCliente;
+
         return view('pages.Home.index', compact('produtos', 'produtosCliente'));
     }
     public function verCarrinho(Request $request)
@@ -64,7 +76,9 @@ class ProdutosPedidosController extends Controller
            $produto = $this->produto->find($array['id']);
            $pedido->produtos()->attach($produto, ['qtd' => $array['qtd']]);
        }
-       return redirect()->route('home');
+       $pedidoProduto = $pedido->produtos()->get();
+       dd($pedidoProduto);
+       return view('pages.home.show', compact());
     }
 
     public function criarPedido($total): array
@@ -76,6 +90,17 @@ class ProdutosPedidosController extends Controller
         $data['users_id'] = auth()->user()->id;
     
         return $data;
+    }
+    public function removerDoCarrinho(Request $request)
+    {
+        session_start();
+        foreach($_SESSION['produtos'] as $index => $produtos){
+            if($produtos['idProduto'] === $request->id){
+                //unset($$_SESSION['produtos'][$index]);
+                array_splice($_SESSION['produtos'], $index, 2);
+            }
+        }
+        return redirect()->route('home');
     }
 
 }

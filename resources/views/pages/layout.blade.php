@@ -16,14 +16,14 @@
         <div class="card-header">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="{{ route('create_pedido') }}">Home</a>
+                    <a class="navbar-brand" href="{{ route('home') }}">Home</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
+                    @ifAdmin
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('index_produto') }}">Produtos</a>
@@ -35,17 +35,22 @@
                                 <a class="nav-link" href="{{ route('index_pedido') }}">Pedidos</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('listarPedididosPagos')}}" class="nav-link">Pedidos
+                                <a href="{{ route('listarPedididosPagos') }}" class="nav-link">Pedidos
                                     Pagos</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('listarPedididosCancelados')}}" class="nav-link">Pedidos
+                                <a href="{{ route('listarPedididosCancelados') }}" class="nav-link">Pedidos
                                     Cancelados</a>
                             </li>
-
                         </ul>
-
                     </div>
+                   @endif
+                   @auth
+                    <a href="{{route('sair')}}" style="color: red">Sair</a>
+                    @endauth
+                    @guest
+                    <a href="{{route('login')}}" style="color: rgb(41, 209, 105)">Logar</a>
+                    @endguest
                 </div>
             </nav>
         </div>

@@ -12,6 +12,7 @@
                 <th>Nome</th>
                 <th>Preço</th>
                 <th>Quantidade</th>
+                <th>Remover Item</th>
             </tr>
         </thead>
         @if (isset($produtos))
@@ -23,6 +24,13 @@
                         <td>{{ $produto['name'] }}</td>
                         <td>{{ $produto['price'] }}</td>
                         <td>{{ $produto['qtd'] }}</td>
+                        <td>
+                            <form action="{{route('remover_produto_carrinho')}}" method="POST">
+                                @csrf
+                                <input type="text" name="id" value="{{$produto->id}}" style="display: none">
+                                <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></button>
+                            </form>
+                        </td>
                     </tr>
                     @php
                         $produtosTotais[$index]['id'] = $produto->id;
@@ -32,13 +40,13 @@
             </tbody>
             <tfoot>
                 <tr style="background-color: #16f09cf5">
-                    <td colspan="2">Total:</td>
+                    <td colspan="3">Total:</td>
                     <td>{{ $total }}</td>
                     <td>
                         <form action="{{ route('store_pedido_produto', ['produtos' => $produtosTotais, 'total' => $total]) }}" method="POST">
                             @method('GET')
                             <button type="submit" class="btn btn-success">Finalizar Compra</button>
-                        </form>
+                        </form></td>
                 </tr>
         @endif
     </table>
