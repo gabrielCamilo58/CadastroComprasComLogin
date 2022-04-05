@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Client;
 use App\Models\Produto;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PedidoFactory extends Factory
@@ -17,11 +18,9 @@ class PedidoFactory extends Factory
     {
     
         return [
-              'clients_id' => Client::factory()->create(),
-              'produtos_id' => Produto::factory()->create(),
+              'users_id' => User::factory()->create(),
               'total' => $this->faker->randomFloat(10, 5, 9999),
               'numero' => $this->faker->numberBetween(1,999),
-              'qtd' => $this->faker->numberBetween(1,999),
               'data' => $this->faker->date(),
 
         ];

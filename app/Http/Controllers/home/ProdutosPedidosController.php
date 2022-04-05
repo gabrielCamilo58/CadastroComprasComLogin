@@ -22,22 +22,23 @@ class ProdutosPedidosController extends Controller
     {
         session_start();
         $produtos = $this->produto->paginate(20);
-        if(isset($_SESSION['produtos'])){
+        if (isset($_SESSION['produtos'])) {
             $produtosCliente = $_SESSION['produtos'];
-        }else{
-        $produtosCliente = $request->produtosCliente;}
-        
+        } else {
+            $produtosCliente = $request->produtosCliente;
+        }
+
         //segunda vez que adiciono o produto entra nesse
         if (isset($produtosCliente)) {
             foreach ($produtosCliente as $index => $produtoCliente) {
-               foreach($produtoCliente as $idProduto){
-                   if($idProduto === $request->id){
+                foreach ($produtoCliente as $idProduto) {
+                    if ($idProduto === $request->id) {
                         $produtosCliente[$index]['qtd'] += 1;
                         $_SESSION['produtos'] = $produtosCliente;
                         return view('pages.Home.index', compact('produtos', 'produtosCliente'));
-                   }
-                   break;
-               }
+                    }
+                    break;
+                }
             }
         }
 
@@ -69,16 +70,19 @@ class ProdutosPedidosController extends Controller
 
     public function salvarPedido(Request $request)
     {
-       $data = $this->criarPedido($request->total);
-       $pedido = $this->pedido->create($data);
-       
-       foreach($request->produtos as $array){
-           $produto = $this->produto->find($array['id']);
-           $pedido->produtos()->attach($produto, ['qtd' => $array['qtd']]);
-       }
-       $pedidoProduto = $pedido->produtos()->get();
-       dd($pedidoProduto);
-       return view('pages.home.show', compact());
+        session_start();
+        unset($_SESSION['produtos']);
+        
+        $data = $this->criarPedido($request->total);
+        $pedido = $this->pedido->create($data);
+
+        foreach ($request->produtos as $array) {
+            $produto = $this->produto->find($array['id']);
+            $pedido->produtos()->attach($produto, ['qtd' => $array['qtd']]);
+        }
+        $pedidoProdutos = $pedido->produtos()->get();
+        $total = $request->total;
+        return view('pages.Home.show', compact('pedidoProdutos', 'total', 'pedido'));
     }
 
     public function criarPedido($total): array
@@ -88,19 +92,18 @@ class ProdutosPedidosController extends Controller
         $data['total'] = $total;
         $data['status'] = 'Em aberto';
         $data['users_id'] = auth()->user()->id;
-    
+
         return $data;
     }
     public function removerDoCarrinho(Request $request)
     {
         session_start();
-        foreach($_SESSION['produtos'] as $index => $produtos){
-            if($produtos['idProduto'] === $request->id){
+        foreach ($_SESSION['produtos'] as $index => $produtos) {
+            if ($produtos['idProduto'] === $request->id) {
                 //unset($$_SESSION['produtos'][$index]);
                 array_splice($_SESSION['produtos'], $index, 2);
             }
         }
         return redirect()->route('home');
     }
-
 }
